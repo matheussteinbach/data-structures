@@ -32,16 +32,16 @@ class ListaEncadeada:
         if pos == 0:
             self.remover_primeiro()
         contador = 1
-        iterador = self.__inicio
-        while iterador.proximo:
-            atual = iterador.proximo
+        ponteiro = self.__inicio
+        while ponteiro.proximo:
+            atual = ponteiro.proximo
             if pos == contador:
-                iterador.proximo = atual.proximo
+                ponteiro.proximo = atual.proximo
                 if atual.proximo == None:
-                    self.__fim = iterador
+                    self.__fim = ponteiro
                 return atual
             contador += 1
-            iterador = atual
+            ponteiro = atual
     
     def acesso_primeiro(self):
         return self.__inicio
@@ -52,16 +52,22 @@ class ListaEncadeada:
     def busca_por_id(self, id):
         if self.__inicio.identificador == id:
             return self.__inicio
-        atual = self.__inicio
-        while atual.proximo:
-            if atual.proximo.identificador == id:
-                return atual.proximo, atual
-            atual = atual.proximo
+        ponteiro = self.__inicio
+        while ponteiro.proximo:
+            atual = ponteiro.proximo
+            if atual.identificador == id:
+                return atual
+            ponteiro = atual
 
     def excluir_por_id(self, id):
-        ponteiro, anterior = self.busca_por_id(id)
-        if ponteiro == self.__inicio:
+        if self.__inicio.identificador == id:
             self.remover_primeiro()
-        else:
-            anterior.proximo = ponteiro.proximo
-        
+        ponteiro = self.__inicio
+        while ponteiro.proximo:
+            atual = ponteiro.proximo
+            if atual.identificador == id:
+                ponteiro.proximo = atual.proximo
+                if atual.proximo == None:
+                    self.__fim = ponteiro
+                return atual
+            ponteiro = atual
