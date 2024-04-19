@@ -62,13 +62,14 @@ class ListaDuplamenteEncadeada:
 
     def inserir_na_posicao(self, k, novo):
         if not self.cheia():
-            self.buscar(k)
+            self.buscar_por_posicao(k)
             self.inserir_antes_do_atual(Elemento(novo))
             self.retroceder_k_posicoes(1)
 
     def excluir_atual(self):
         if not self.vazia():
             self.__cursor.anterior.proximo = self.__cursor.proximo
+            self.retroceder_k_posicoes(1)
             self.__cursor.proximo.anterior = self.__cursor
             self.__contador -= 1
 
@@ -86,20 +87,27 @@ class ListaDuplamenteEncadeada:
 
     def excluir_elem(self, chave):
         if not self.vazia():
-            self.buscar(chave)
+            self.buscar_por_chave(chave)
             self.excluir_atual()
 
     def excluir_da_pos(self, k):
         if not self.vazia():
-            self.buscar(k)
+            self.buscar_por_posicao(k)
             self.excluir_atual()
 
-    def buscar(self, chave) -> bool:
+    def buscar_por_chave(self, chave) -> bool:
         self.ir_para_primeiro()
-        posicao = 1
         for i in range(self.__contador):
-            if chave == self.__cursor.identificador or \
-                    chave == posicao:
+            if chave == self.__cursor.identificador:
+                return True
+            self.avancar_k_posicoes(1)
+        return False
+
+    def buscar_por_posicao(self, k) -> bool:
+        self.ir_para_primeiro()
+        posicao = 0
+        for i in range(self.__contador):
+            if k == posicao:
                 return True
             self.avancar_k_posicoes(1)
             posicao += 1
