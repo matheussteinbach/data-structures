@@ -64,7 +64,7 @@ class ListaDuplamenteEncadeada:
         if not self.cheia():
             self.buscar(k)
             self.inserir_antes_do_atual(Elemento(novo))
-            self.retroceder_k_posicoes(1)v
+            self.retroceder_k_posicoes(1)
 
     def excluir_atual(self):
         if not self.vazia():
