@@ -111,7 +111,7 @@ class ListaDuplamenteEncadeada:
             return False
         else:
             self.__ir_para_primeiro()
-            self.__avancar_k_posicoes(k)
+            self.__avancar_k_posicoes(k - 1)
             return True
 
     def __avancar_k_posicoes(self, k):
