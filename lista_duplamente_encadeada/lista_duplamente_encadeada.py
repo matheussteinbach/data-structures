@@ -15,9 +15,8 @@ class ListaDuplamenteEncadeada:
     def inserir_antes_do_atual(self, novo):
         if not self.cheia():
             novo_elemento = Elemento(novo)
-            if not self.__inicio:
-                self.__inicio = novo_elemento
-                self.__fim = novo_elemento
+            if not self.__inicio or not self.__cursor.proximo:
+                self.inserir_como_primeiro(novo)
             else:
                 novo_elemento.proximo = self.__cursor
                 self.__cursor.anterior.proximo = novo_elemento
@@ -28,9 +27,8 @@ class ListaDuplamenteEncadeada:
     def inserir_apos_atual(self, novo):
         if not self.cheia():
             novo_elemento = Elemento(novo)
-            if not self.__inicio:
-                self.__inicio = novo_elemento
-                self.__fim = novo_elemento
+            if not self.__inicio or not self.__cursor.anterior:
+                self.inserir_como_ultimo(novo)
             else:
                 novo_elemento.anterior = self.__cursor
                 self.__cursor.proximo.anterior = novo_elemento
@@ -63,15 +61,20 @@ class ListaDuplamenteEncadeada:
     def inserir_na_posicao(self, k, novo):
         if not self.cheia():
             self.buscar_por_posicao(k)
-            self.inserir_antes_do_atual(Elemento(novo))
-            self.retroceder_k_posicoes(1)
+            self.inserir_antes_do_atual(novo)
+            self.__retroceder_k_posicoes(1)
 
     def excluir_atual(self):
         if not self.vazia():
-            self.__cursor.anterior.proximo = self.__cursor.proximo
-            self.retroceder_k_posicoes(1)
-            self.__cursor.proximo.anterior = self.__cursor
-            self.__contador -= 1
+            if self.__cursor == self.__inicio:
+                self.excluir_prim()
+            elif self.__cursor == self.__fim:
+                self.excluir_ult()
+            else:
+                self.__cursor.anterior.proximo = self.__cursor.proximo
+                self.__retroceder_k_posicoes(1)
+                self.__cursor.proximo.anterior = self.__cursor
+                self.__contador -= 1
 
     def excluir_prim(self):
         if not self.vazia():
@@ -96,49 +99,43 @@ class ListaDuplamenteEncadeada:
             self.excluir_atual()
 
     def buscar_por_chave(self, chave) -> bool:
-        self.ir_para_primeiro()
+        self.__ir_para_primeiro()
         for i in range(self.__contador):
             if chave == self.__cursor.identificador:
                 return True
-            self.avancar_k_posicoes(1)
+            self.__avancar_k_posicoes(1)
         return False
 
     def buscar_por_posicao(self, k) -> bool:
-        self.ir_para_primeiro()
-        posicao = 0
-        for i in range(self.__contador):
-            if k == posicao:
-                return True
-            self.avancar_k_posicoes(1)
-            posicao += 1
-        return False
+        if self.__contador < k:
+            return False
+        else:
+            self.__ir_para_primeiro()
+            self.__avancar_k_posicoes(k)
+            return True
 
-    def avancar_k_posicoes(self, k):
+    def __avancar_k_posicoes(self, k):
         try:
             for i in range(k):
                 self.__cursor = self.__cursor.proximo
         except AttributeError:
-            self.__cursor = self.__fim
+            return
 
-    def retroceder_k_posicoes(self, k):
+    def __retroceder_k_posicoes(self, k):
         try:
             for i in range(k):
                 self.__cursor = self.__cursor.anterior
         except AttributeError:
-            self.__cursor = self.__inicio
+            return
 
-    def ir_para_primeiro(self):
+    def __ir_para_primeiro(self):
         self.__cursor = self.__inicio
 
-    def ir_para_ultimo(self):
+    def __ir_para_ultimo(self):
         self.__cursor = self.__fim
 
     def vazia(self) -> bool:
-        if not self.__contador:
-            return True
-        return False
+        return not self.__contador
 
     def cheia(self) -> bool:
-        if self.__contador == self.__tamanho:
-            return True
-        return False
+        return self.__contador == self.__tamanho
